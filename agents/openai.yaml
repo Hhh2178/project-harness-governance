@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Harness Governance"
+  short_description: "Scaffold and maintain project harness systems"
+  default_prompt: "Use $project-harness-governance to establish the harness, documentation, visual standards, and verification structure for this project."
