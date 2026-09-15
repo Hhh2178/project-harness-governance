@@ -86,12 +86,13 @@ Neither tool is a product dependency or a prerequisite for building, testing, re
 ```text
 project-harness-governance/
 ├── SKILL.md                         # Compact triggerable guidance
-├── references/harness-blueprint.md  # Detailed contracts and templates
+├── references/harness-blueprint.md  # Reference index and reading routes
+├── references/                      # Task-scoped governance contracts
 ├── agents/openai.yaml               # Codex display metadata
 └── LICENSE
 ```
 
-Read `SKILL.md` for the operating workflow and `references/harness-blueprint.md` for file contracts, authority rules, maintenance loops, verification ideas, and the full project-start checklist.
+Read `SKILL.md` for the operating workflow, then use `references/harness-blueprint.md` as a routing index. Follow only the task-scoped reference you need: lifecycle/modes, root authority, systems/interfaces, UI standards, evidence/verification, or Ledger/optional tools. This keeps routine Codex work focused and reduces context cost.
 
 ## Validation
 

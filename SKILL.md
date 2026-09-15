@@ -101,4 +101,4 @@ Before declaring Harness work complete:
 - Unresolved risks and the next action are explicit.
 - `git status --short` is reported.
 
-Read `references/harness-blueprint.md` for file templates, mode selection, maintenance details, verification ideas, and the full project-start checklist.
+Read `references/harness-blueprint.md` first. It is an index: follow only the routed reference needed for the task (`lifecycle-and-modes.md`, `root-and-authority-contracts.md`, `systems-and-interface-contracts.md`, `frontend-and-admin-standards.md`, `evidence-and-verification.md`, or `ledger-and-optional-tools.md`). Do not load every reference by default.
