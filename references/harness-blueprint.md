@@ -14,7 +14,14 @@ A project harness is the operating system around the codebase. It gives agents a
 - Verify that documentation, scripts, package exports, and release state still agree.
 - Leave audit evidence after every meaningful change.
 
-The harness is not product implementation. It prepares and protects implementation.
+The harness is not product implementation and does not build an Agent runtime,
+orchestration platform, context engine, or project-specific tool platform. It
+is a repository-level governance layer that helps Codex maintain the project
+across tasks and sessions.
+
+Optimize for attention and token economy: keep the root constitution short,
+route to documents instead of repeating them, read only task-relevant material,
+and prefer deterministic checks over long instructions.
 
 ## 2. Start Procedure
 
@@ -84,6 +91,14 @@ docs/
     worktree-and-branch-policy.md
     archive-policy.md
     secrets-and-access-policy.md
+  requirements/
+    README.md
+    product-goals.md
+    scope.md
+    acceptance-criteria.md
+  current-state.md
+  decisions/
+    README.md
   systems/
     README.md
     interface-documentation-template.md
@@ -174,6 +189,29 @@ Minimum CLI capabilities:
 - `ledger summary`: show current state.
 - `verify --write-evidence`: run harness checks and write evidence.
 
+## 3.1 Minimality And Read Budget
+
+Do not create every possible directory for a small project. Start with:
+
+```text
+AGENTS.md
+README.md
+docs/INDEX.md
+docs/current-state.md
+docs/requirements/
+docs/logbooks/daily/
+scripts/
+```
+
+Add systems, decisions, plans, validations, failures, visual registries, or
+Ledger only when the project has a real need. Keep `AGENTS.md` roughly within
+100-300 lines, keep `current-state.md` to a short snapshot, and make
+`docs/INDEX.md` a routing table rather than a duplicate summary.
+
+Every task reads the root entries and current state, then follows the index to
+only the relevant requirement, plan, system, decision, or log. Full-tree
+reading is reserved for Harness repair, release preparation, or explicit audit.
+
 ## 4. Root Entry Contracts
 
 ### `AGENTS.md` - Agent Constitution
@@ -192,6 +230,11 @@ Required sections:
 - Logging duties: when to update daily logs, validation logs, release logs, and incident logs.
 - Stop-and-ask conditions: conflicting user changes, secret exposure, production risk, unclear branch, destructive operation, or schema migration risk.
 - Maintenance block: who updates this file and what changes trigger updates.
+- Documentation maintenance protocol: classify affected facts after meaningful
+  changes and ask before changing authority documents.
+- Optional tool policy: CodeGraph navigation and RTK output compression are
+  non-essential, have documented fallbacks, and never become product
+  dependencies.
 
 If ledger mode is active, also include:
 
@@ -241,6 +284,17 @@ Starter skeleton:
 
 ## Stop And Ask
 [conditions that require user confirmation]
+
+## Documentation Maintenance Protocol
+1. Identify changed behavior, interfaces, commands, permissions, runtime
+   assumptions, and project structure.
+2. Locate the canonical owner for each affected fact.
+3. Classify each result as no update needed, routine record, proposed authority
+   update, or conflict requiring user decision.
+4. Append routine evidence automatically. Ask before changing this file,
+   project purpose/scope, acceptance criteria, architecture, security or
+   deployment policy, verification gates, or approved decisions.
+5. Never silently resolve a code/documentation conflict.
 ```
 
 ### `README.md` - Human Project Overview
@@ -257,11 +311,30 @@ Required sections:
 - Deployment summary: gray/prod names, links, ports, and canonical runbooks.
 - Documentation map: links to `docs/INDEX.md`, systems, plans, logs, ops.
 - Current work status: only a short pointer, not a full log.
+- Long-term product direction may be summarized here; detailed goals and
+  acceptance conditions belong under `docs/requirements/`.
 
 Must not contain:
 
 - Duplicated deep system docs.
 - Full deployment logs.
+
+### Requirements And State
+
+Keep these concerns separate:
+
+- `docs/requirements/product-goals.md`: long-term goal, current phase goal,
+  success signals, and non-goals.
+- `docs/requirements/scope.md`: in-scope, out-of-scope, dependencies, and
+  constraints for the current phase.
+- `docs/requirements/acceptance-criteria.md`: functional, documentation, and
+  verification conditions that define completion.
+- `docs/current-state.md`: current phase, active work, recently completed work,
+  known risks, next actions, and last verification. Keep it short and volatile.
+
+Requirements are user-approved intent. Plans describe how to reach that intent.
+Current state describes where the repository is now. Logs and validations prove
+what happened. Do not use one file as a substitute for the others.
 - Secrets or pasted env values.
 
 ### `MEMORY.md`
@@ -730,9 +803,56 @@ At the end of a task:
 - Leave worktree state explicit.
 - Commit in small coherent boundaries when requested.
 
-## 12.1 Role Workflow Registry
+## 12.1 Documentation Impact And User Confirmation
 
-For larger projects, create a local workflow registry. These are not necessarily Codex global skills; they are project-local operating roles that agents can follow.
+After every meaningful code, configuration, dependency, interface, or
+structure change, perform this small review:
+
+1. What project fact changed or may now be stale?
+2. Which file is the canonical owner of that fact?
+3. Does the current text still match the repository?
+4. Classify the result: `no update needed`, `routine record`, `proposed
+   authority update`, or `conflict requiring user decision`.
+
+Routine progress, test results, validation evidence, and known risks may be
+recorded without interrupting the user. Ask the user before changing
+`AGENTS.md`, project purpose or scope, acceptance criteria, architecture,
+security or deployment policy, verification gates, or an approved decision.
+When code and documentation disagree, present the facts and proposed files; do
+not silently choose a source. Record the confirmed decision in the appropriate
+decision or logbook file.
+
+Use this impact table as a default:
+
+| Change | Inspect | Default action |
+| --- | --- | --- |
+| Internal implementation | related system docs and tests | update only if behavior changed |
+| Public interface or data model | requirements, systems, decisions | ask before authority update |
+| Start/test/build command | README, AGENTS, verification docs | ask if authoritative text changes |
+| Permission, secret, or deployment rule | governance and ops docs | always ask |
+| Confirmed progress or test result | current state and logbook | routine record |
+
+## 12.2 Optional Tool Protocols
+
+CodeGraph and RTK are Codex aids, not project dependencies. If detected,
+record their availability in the Harness adoption or validation report rather
+than hard-coding a machine path or version into `AGENTS.md`.
+
+CodeGraph may be used for unfamiliar modules, cross-file exploration, and
+impact analysis. Confirm important findings against current source and tests;
+fall back to `rg` and direct inspection when unavailable or stale. It is never
+required for setup, build, test, release, or Harness verification.
+
+RTK may compress routine shell output. Verification must remain runnable with
+native commands. Use the native command when compact output is incomplete or
+diagnosis needs the raw stream. Do not change global RTK hooks as part of
+project work without explicit user approval.
+
+## 12.3 Project Workflow Registry
+
+For larger projects, create a local workflow registry. These are project-local
+governance procedures that Codex can follow; they do not create or configure a
+new Agent runtime.
 
 Recommended registry entries:
 
@@ -748,7 +868,8 @@ Recommended registry entries:
 - `review-and-evidence`: review changes and produce durable findings.
 - `operate-long-running-project`: periodic cleanup, drift checks, and archival.
 
-Use this registry when a project needs repeatable agent roles but does not need every role to become a global Codex skill.
+Use this registry when a project needs repeatable project procedures but does not
+need every procedure to become a global Codex skill.
 
 ## 13. Project Start Checklist
 
@@ -760,12 +881,11 @@ Use this checklist when bootstrapping a new project:
 - `README.md` explains purpose, setup, architecture, commands, docs map, and current state pointer.
 - `docs/INDEX.md` routes every major doc family.
 - Governance docs define root responsibility, documentation rules, engineering guardrails, worktree policy, archive policy, and secrets policy.
-- System template exists and at least major systems have placeholder docs.
-- Frontend/admin design token docs exist with concrete values.
-- Visual and functional component registries exist.
-- Logbook folders exist and current daily entry exists.
-- Specs/plans folders exist.
-- Verification scripts or planned verification contracts exist.
+- System template exists when the project has multiple systems.
+- Frontend/admin design token docs and component registries exist when the project has a UI.
+- Logbook folders and a current entry exist when the project uses ongoing audit records.
+- Requirements and plans exist when the project has approved scope or multi-step work.
+- Verification scripts or planned verification contracts exist for every material rule.
 - Package scripts or equivalent commands expose harness verification.
 - If ledger mode is active, ledger files exist, generated DB is ignored, CLI works, and verification can write evidence.
 
